@@ -36,12 +36,12 @@ class TestNode(unittest.TestCase):
          "p",
          [
             LeafNode("b", "Bold text"),
-            LeafNode(None, "  Normal text  "),
-            LeafNode("i", "   italic text"),
-            LeafNode(None, "    Normal text      "),
+            LeafNode(None, " Normal text "),
+            LeafNode("i", "italic text"),
+            LeafNode(None, " Normal text "),
          ],
       )
-      self.assertEqual(node3.to_html(), "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>")
+      self.assertEqual(node3.to_html(), "<p><b>Bold text</b> Normal text <i>italic text</i> Normal text </p>")
       self.assertEqual(node.hasChildren(), False)
       self.assertEqual(node3.hasChildren(), True)
 

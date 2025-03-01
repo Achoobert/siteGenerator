@@ -21,19 +21,30 @@ class TestConversion(unittest.TestCase):
     def test_all_italic(self):
         node = TextNode("_This is a italic node_", TextType.TEXT)
         New_nodeList = split_nodes_delimiter([node],"_",TextType.ITALIC)
+        print(New_nodeList[0])
         # is now a list of nodes
-        self.assertEqual(len(New_nodeList), 1) # three nodes
-        self.assertEqual(New_nodeList[0].tag, "i")
-        self.assertEqual(New_nodeList[0].value, "This is a italic node")
-        self.assertEqual(New_nodeList[0].value, "italic")
-    # def test_split_italic(self):
-    #     node = TextNode("This is a _italic_ node", TextType.TEXT)
-    #     New_nodeList = split_nodes_delimiter([node],"_",TextType.ITALIC)
-    #     # is now a list of nodes
-    #     self.assertEqual(len(New_nodeList), 3) # three nodes
-    #     self.assertEqual(New_nodeList[1].tag, "i")
-    #     self.assertEqual(New_nodeList[0].value, "This is a")
-    #     self.assertEqual(New_nodeList[1].value, "italic")
+        self.assertEqual(len(New_nodeList), 1) # one nodes
+        self.assertEqual(New_nodeList[0].text_type, TextType.ITALIC)
+        self.assertEqual(New_nodeList[0].text, "This is a italic node")
+    def test_split_italic(self):
+        node = TextNode("This is a _italic_ node", TextType.TEXT)
+        New_nodeList = split_nodes_delimiter([node],"_",TextType.ITALIC)
+        # is now a list of nodes
+        self.assertEqual(len(New_nodeList), 3) # three nodes
+        self.assertEqual(New_nodeList[1].text_type, TextType.ITALIC)
+        self.assertEqual(New_nodeList[0].text, "This is a ")
+        self.assertEqual(New_nodeList[1].text, "italic")
+    def test_from_bootdev(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertEqual(
+            new_nodes,
+            [
+                TextNode("This is text with a ", TextType.TEXT),
+                TextNode("code block", TextType.CODE),
+                TextNode(" word", TextType.TEXT),
+            ]
+        )
     #     # self.assertEqual(html_node.to_html(), "<b>This is a bold node</b>")
     # def test_split_code(self):
     #     node = TextNode("This is a bold node", TextType.BOLD)

@@ -35,7 +35,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     output = []
     for node in old_nodes:
         print (node.text)
-        output.append(
+        output.extend(
             split_node(node, delimiter, text_type)
         )
     return output
@@ -50,28 +50,40 @@ def split_node(node, delimiter, text_type):
     #     # 
     else:
         textArr = node.text.split()
-        print(textArr)
+        # print(textArr)
         outputArr = [] # final list of nodes
         currentNode = None
         for word in textArr: 
             if (delimiter in word): # Either beginning or end of delimited, we need to take action
                 #  how to handle single word and multi word
                 # TODO remove delimit from word output
+                # print ( len( word.split(delimiter) ))
+                # print ( ( word.split(delimiter) ))
+                singleWord = False
                 if ( len( word.split(delimiter) ) > 2 ):
-                    raise Exception("Too much")
+                    # raise Exception("Too much")
+                    # print("single word")
+                    singleWord = True
+                word = "".join(word.split(delimiter))
                 if (currentNode != None and currentNode.text_type != None and currentNode.text_type == text_type):
                     # close current node
                     currentNode.text = " ".join([currentNode.text, word])
-                    outputArr.append(currentNode.copy())
+                    # currentNode.text  += " "
+                    outputArr.append(currentNode)
+                    print(currentNode.text,"p")
                     currentNode = None
                 else:
                     # open new node
                     if (currentNode != None):
-                        outputArr.append(currentNode.copy())
+                        print(currentNode.text,"p")
+                        outputArr.append(currentNode)
                     currentNode = TextNode("".join(word), text_type)
+                if (singleWord):
+                    outputArr.append(currentNode)
+                    currentNode = None
             else:
                 if (currentNode == None):
-                    currentNode = TextNode("".join(word), None)
+                    currentNode = TextNode("".join(word), TextType.TEXT)
                 else:
                     currentNode.text = " ".join([currentNode.text, word])
         # Is there a dangling currentNode?

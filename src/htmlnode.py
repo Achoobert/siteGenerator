@@ -42,14 +42,14 @@ class HTMLNode():
       if self.tag:
          output.append(f"tag: {self.tag}")
       if self.value:
-         output.append(f"value: {self.value.strip()}")
+         output.append(f"value: {self.value}")
       if self.children:
          output.append(f"children: {self.children}")
       if self.props:
          output.append(f"props: {self.props}")
       output.append(")")
       string = (" ").join(output)
-      return string.strip()
+      return string
    pass
 
 
@@ -61,8 +61,8 @@ class LeafNode(HTMLNode):
         if self.value is None:
             raise ValueError("Invalid HTML: no value")
         if self.tag is None:
-            return self.value.strip()
-        return f"<{self.tag}{self.props_to_html()}>{self.value.strip()}</{self.tag}>"
+            return self.value
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
 
     def __repr__(self):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
@@ -78,7 +78,7 @@ class ParentNode(HTMLNode):
          raise ValueError("Invalid parent: no children")
       # if self.tag is None:
       #    return self.value.strip()
-      return f"<{self.tag}{self.props_to_html()}>{self.getChildren().strip()}</{self.tag}>"
+      return f"<{self.tag}{self.props_to_html()}>{self.getChildren()}</{self.tag}>"
       
    def __repr__(self):
       return f"LeafNode({self.tag}, {self.getChildren()}, {self.props})"

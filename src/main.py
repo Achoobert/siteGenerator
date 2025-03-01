@@ -1,5 +1,6 @@
 from textnode import TextNode, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
+from conversion import text_node_to_html_node, split_nodes_delimiter
 
 # print("hello world")
 a = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
