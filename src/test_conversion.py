@@ -83,7 +83,7 @@ class TestConversion(unittest.TestCase):
              matches
         )
         
-    def test_split_images(self):
+    def test_split_links(self):
         node = TextNode(
             "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
             TextType.TEXT,

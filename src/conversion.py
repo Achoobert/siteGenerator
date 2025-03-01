@@ -66,18 +66,49 @@ def extract_markdown_images(text):
 def extract_markdown_links(text):
     return re.findall( r"\[(.*?)\]\((.*?)\)", text )
 
+def split_node_image(node):
+    wipText = node.text
+    imgTuples = extract_markdown_images(node.text)
+    onlyNonLinkText = re.sub(r"\!\[.*?\]\(.*?\)","^temp^", wipText)
+    outArr = []
+    outArr.extend(
+        split_node(TextNode( onlyNonLinkText ,node.text_type ),"^",TextType.IMAGE)
+    )
+    insertTupleIndex = 0
+    for i in range( len(outArr)):
+        if ( outArr[i].text_type == TextType.IMAGE ):
+            outArr[i].text = imgTuples[insertTupleIndex][0]
+            outArr[i].url = imgTuples[insertTupleIndex][1]
+            insertTupleIndex += 1
+    return outArr
+
 def split_nodes_image(old_nodes):
-    # return a list of nodes
-    # non-image nodes should be in base node-type
-    return []
+    outputArray = []
+    for node in old_nodes:
+        outputArray.extend(split_node_image(node))
+    # print (outputArray)
+    return outputArray
+
+def split_node_link(node):
+    wipText = node.text
+    imgTuples = extract_markdown_links(node.text)
+    onlyNonLinkText = re.sub(r"\[.*?\]\(.*?\)","^temp^", wipText)
+    outArr = []
+    outArr.extend(
+        split_node(TextNode( onlyNonLinkText ,node.text_type ),"^",TextType.LINK)
+    )
+    insertTupleIndex = 0
+    for i in range( len(outArr)):
+        if ( outArr[i].text_type == TextType.LINK ):
+            outArr[i].text = imgTuples[insertTupleIndex][0]
+            outArr[i].url = imgTuples[insertTupleIndex][1]
+            insertTupleIndex += 1
+    return outArr
 def split_nodes_link(old_nodes):
-    return []
+    outputArray = []
+    for node in old_nodes:
+        outputArray.extend(split_node_link(node))
+    # print (outputArray)
+    return outputArray
 
-# import re
-# text = "I'm a little teapot, short and stout. Here is my handle, here is my spout."
-# matches = re.findall(r"teapot", text)
-# print(matches) # ['teapot']
 
-# text = "My email is lane@example.com and my friend's email is hunter@example.com"
-# matches = re.findall(r"(\w+)@(\w+\.\w+)", text)
-# print(matches)  # [('lane', 'example.com'), ('hunter', 'example.com')]
