@@ -21,20 +21,12 @@ def text_node_to_html_node(text_node):
             return LeafNode("img", "", "src", "alt")
         case default:
             raise Exception ("unsupported text type")
-# 
-# node = TextNode("This is text with a `code block` word", TextType.TEXT)
-# new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
-# [
-#     TextNode("This is text with a ", TextType.TEXT),
-#     TextNode("code block", TextType.CODE),
-#     TextNode(" word", TextType.TEXT),
-# ]
 
 # convert list of text to list of text_nodes
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     output = []
     for node in old_nodes:
-        print (node.text)
+        # print (node.text)
         output.extend(
             split_node(node, delimiter, text_type)
         )
@@ -43,63 +35,27 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 def split_node(node, delimiter, text_type):
     if (delimiter not in node.text):
         return node
-    # TODO count number of instances of delimiter in text. Should be "even"
-    # if not, should raise error
-    # delimitArr = node.text.split(delimiter)
-    # if ( len(delimitArr) / 2 % 1):
-    #     # 
     else:
-        textArr = node.text.split()
-        # print(textArr)
-        outputArr = [] # final list of nodes
-        currentNode = None
-        for word in textArr: 
-            if (delimiter in word): # Either beginning or end of delimited, we need to take action
-                #  how to handle single word and multi word
-                # TODO remove delimit from word output
-                # print ( len( word.split(delimiter) ))
-                # print ( ( word.split(delimiter) ))
-                singleWord = False
-                if ( len( word.split(delimiter) ) > 2 ):
-                    # raise Exception("Too much")
-                    # print("single word")
-                    singleWord = True
-                word = "".join(word.split(delimiter))
-                if (currentNode != None and currentNode.text_type != None and currentNode.text_type == text_type):
-                    # close current node
-                    currentNode.text = " ".join([currentNode.text, word])
-                    # currentNode.text  += " "
-                    outputArr.append(currentNode)
-                    print(currentNode.text,"p")
-                    currentNode = None
-                else:
-                    # open new node
-                    if (currentNode != None):
-                        print(currentNode.text,"p")
-                        outputArr.append(currentNode)
-                    currentNode = TextNode("".join(word), text_type)
-                if (singleWord):
-                    outputArr.append(currentNode)
-                    currentNode = None
+        typeSwitch = type_options(node.text_type, text_type)
+        inArr = node.text.split(delimiter)
+        if ( len( inArr ) < 2 ):
+            raise Exception ("Not enough delimiters")
+        outputArr = [] 
+        current_type = node.text_type
+        for i in range(len(inArr)): 
+            # print( len(inArr[i]) )
+            if ( len(inArr[i]) == 0):
+                current_type = typeSwitch(current_type)
             else:
-                if (currentNode == None):
-                    currentNode = TextNode("".join(word), TextType.TEXT)
-                else:
-                    currentNode.text = " ".join([currentNode.text, word])
-        # Is there a dangling currentNode?
-        if (currentNode != None):
-            outputArr.append(currentNode)
+                outputArr.append(TextNode(inArr[i], current_type))
+                current_type = typeSwitch(current_type)
         return outputArr
 
-# def find_text_delimiter(text, delimiter):
-#     splitTextArray = text.split(delimiter)
-#     if ( len(splitTextArray) > 2 ):
-#         # Word is whole node
-#     elif ( len(splitTextArray) == 2 ):
-#         if (splitTextArray[0] == "")
-#         # start of section
-#         elif (splitTextArray[1] == "")
-#         # end of section
-#         else: 
-#             raise Exception("Where is my delimiter?")
-#     else 
+def type_options (oldType, newType):
+    def type_switch(activeType):
+        if (activeType == oldType):
+            return newType
+        elif (activeType == newType):
+            return oldType
+        raise Exception("activeType is not in expected range")
+    return type_switch

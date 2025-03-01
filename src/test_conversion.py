@@ -34,6 +34,17 @@ class TestConversion(unittest.TestCase):
         self.assertEqual(New_nodeList[1].text_type, TextType.ITALIC)
         self.assertEqual(New_nodeList[0].text, "This is a ")
         self.assertEqual(New_nodeList[1].text, "italic")
+    def test_split_multi_italic(self):
+        node = TextNode("This is an _italic_ ah _node_", TextType.TEXT)
+        New_nodeList = split_nodes_delimiter([node],"_",TextType.ITALIC)
+        # is now a list of nodes
+        self.assertEqual(len(New_nodeList), 4) # four nodes
+        self.assertEqual(New_nodeList[1].text_type, TextType.ITALIC)
+        self.assertEqual(New_nodeList[3].text_type, TextType.ITALIC)
+        self.assertEqual(New_nodeList[0].text, "This is an ")
+        self.assertEqual(New_nodeList[1].text, "italic")
+        self.assertEqual(New_nodeList[3].text, "node")
+        self.assertEqual(New_nodeList[1].text, "italic")
     def test_from_bootdev(self):
         node = TextNode("This is text with a `code block` word", TextType.TEXT)
         new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
