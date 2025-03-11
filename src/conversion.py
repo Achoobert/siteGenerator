@@ -7,6 +7,10 @@ from htmlnode import LeafNode
 from textnode import TextType, TextNode
 
 def text_node_to_html_node(text_node):
+    if (len(text_node.text.strip()) == 0):
+        return None
+    if (text_node.text_type != TextType.CODE):
+        text_node.text = text_node.text.replace("\n", " ")
     match text_node.text_type:
         case TextType.TEXT:
             return LeafNode(None, text_node.text)
@@ -35,6 +39,8 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
 def split_node(node, delimiter, text_type):
     if (delimiter not in node.text):
+        return [node]
+    if (node.text_type == TextType.CODE):
         return [node]
     else:
         typeSwitch = type_options(node.text_type, text_type)
@@ -121,13 +127,13 @@ def text_to_textnodes(text):
     outArr = []
     initialNode = TextNode( text, TextType.TEXT )
     # TEXT = "text"
+    # CODE = "code"
+    outArr = split_nodes_delimiter([initialNode], "`", TextType.CODE)
     # BOLD = "bold"
-    outArr = split_nodes_delimiter([initialNode], "**", TextType.BOLD)
+    outArr = split_nodes_delimiter(outArr, "**", TextType.BOLD)
 
     # ITALIC = "italic"
     outArr = split_nodes_delimiter(outArr, "_", TextType.ITALIC)
-    # CODE = "code"
-    outArr = split_nodes_delimiter(outArr, "`", TextType.CODE)
     # IMAGE = "image"
     outArr = split_nodes_image(outArr)
     # LINK = "link"
@@ -153,7 +159,7 @@ def splitBlock(text):
     newArray = text.split("\n\n")
     outArray = []
     for i in range(len(newArray)):
-        if ( len(newArray[i]) > 1):
+        if ( len(newArray[i]) > 0):
             newText = stripBlock(newArray[i])
             outArray.append(newText)
     return outArray
