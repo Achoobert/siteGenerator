@@ -67,8 +67,10 @@ def extract_markdown_links(text):
     return re.findall( r"\[(.*?)\]\((.*?)\)", text )
 
 def split_node_image(node):
-    wipText = node.text
     imgTuples = extract_markdown_images(node.text)
+    if (len(imgTuples)<1):
+        return [node]
+    wipText = node.text
     onlyNonLinkText = re.sub(r"\!\[.*?\]\(.*?\)","^temp^", wipText)
     outArr = []
     outArr.extend(
@@ -90,8 +92,10 @@ def split_nodes_image(old_nodes):
     return outputArray
 
 def split_node_link(node):
+    linkTuples = extract_markdown_links(node.text)
+    if (len(linkTuples)<1):
+        return [node]
     wipText = node.text
-    imgTuples = extract_markdown_links(node.text)
     onlyNonLinkText = re.sub(r"\[.*?\]\(.*?\)","^temp^", wipText)
     outArr = []
     outArr.extend(
@@ -100,15 +104,72 @@ def split_node_link(node):
     insertTupleIndex = 0
     for i in range( len(outArr)):
         if ( outArr[i].text_type == TextType.LINK ):
-            outArr[i].text = imgTuples[insertTupleIndex][0]
-            outArr[i].url = imgTuples[insertTupleIndex][1]
+            outArr[i].text = linkTuples[insertTupleIndex][0]
+            outArr[i].url = linkTuples[insertTupleIndex][1]
             insertTupleIndex += 1
     return outArr
 def split_nodes_link(old_nodes):
     outputArray = []
+    if (not isinstance(old_nodes,list)):
+        raise Exception("Not List")
     for node in old_nodes:
         outputArray.extend(split_node_link(node))
     # print (outputArray)
     return outputArray
+
+def text_to_textnodes(text):
+    outArr = []
+    initialNode = TextNode( text, TextType.TEXT )
+    # TEXT = "text"
+    # BOLD = "bold"
+    outArr = split_nodes_delimiter([initialNode], "**", TextType.BOLD)
+
+    # ITALIC = "italic"
+    outArr = split_nodes_delimiter(outArr, "_", TextType.ITALIC)
+    # CODE = "code"
+    outArr = split_nodes_delimiter(outArr, "`", TextType.CODE)
+    # IMAGE = "image"
+    outArr = split_nodes_image(outArr)
+    # LINK = "link"
+    outArr = split_nodes_link(outArr)
+    return outArr
+
+def stripBlock(text):
+    # temporarily remove \n characters, strip(), then restore
+    # print ( text)
+    newArray = text.split("\n")
+    skippedFirst = False
+    outString = ""
+    for i in range(len(newArray)):
+        newText = newArray[i].strip()
+        # print (newText)
+        if (skippedFirst and len(newText) > 1):
+            outString += ("\n"+newText)
+        elif (len(newText) > 1):
+            outString = newText
+            skippedFirst = True
+    return outString
+def splitBlock(text):
+    newArray = text.split("\n\n")
+    outArray = []
+    for i in range(len(newArray)):
+        if ( len(newArray[i]) > 1):
+            newText = stripBlock(newArray[i])
+            outArray.append(newText)
+    return outArray
+
+def markdown_to_blocks(text):
+
+    # blocks = text.split("\n\n")
+    blocks = splitBlock(text)
+    # blocks = list( map( lambda x: "".join(
+    #                 list ( map ( stripBlock, x ))
+    #             ), block.split("\n\n") 
+    #             ) ) 
+    # print (blocks)
+    # blocks2 = list( map( stripBlock, blocks ) ) 
+
+    # return (list(filter( lambda data: data != "", blocks )))
+    return blocks
 
 
