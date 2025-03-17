@@ -2,10 +2,16 @@
    "python.testing.unittestArgs": [
       "-v",
       "-s",
-      ".",
+      "./src",
       "-p",
       "test_*.py"
    ],
    "python.testing.pytestEnabled": false,
-   "python.testing.unittestEnabled": true
+   "python.testing.unittestEnabled": true,
+   "cSpell.words": [
+      "blocknode",
+      "blocktohtml",
+      "htmlnode",
+      "textnode"
+   ]
 }

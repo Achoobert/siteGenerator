@@ -1,6 +1,7 @@
 import unittest
 import main
 
+from htmlnode import ParentNode
 from textnode import TextNode, TextType
 from blocknode import block_to_block_type, BlockType
 from conversion import text_node_to_html_node  
@@ -19,6 +20,7 @@ class TestBlockNode(unittest.TestCase):
    """
 
       node = markdown_to_html_node(md)
+      self.assertIsInstance(node, ParentNode)
       html = node.to_html()
       self.assertEqual(
          html,
@@ -34,10 +36,63 @@ class TestBlockNode(unittest.TestCase):
    """
 
       node = markdown_to_html_node(md)
+      self.assertIsInstance(node, ParentNode)
       html = node.to_html()
       self.assertEqual(
          html,
          "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+      )
+   def test_quoteblock(self):
+      md = """> This is quote that _should_ remain
+> the **same** even with inline stuff
+"""
+
+      node = markdown_to_html_node(md)
+      self.assertIsInstance(node, ParentNode)
+      html = node.to_html()
+      self.assertEqual(
+         html,
+         "<div><blockquote>This is quote that <i>should</i> remain the <b>same</b> even with inline stuff </blockquote></div>",
+      )
+   def test_headerblock(self):
+      md = """# This is header that _should_ 
+normal text
+## Smaller header
+normal text
+   """
+
+      node = markdown_to_html_node(md)
+      self.assertIsInstance(node, ParentNode)
+      html = node.to_html()
+      self.assertEqual(
+         html,
+         "<div><h1>This is header that <i>should</i></h1>\n<p>normal text</p>\n<h2>Smaller header</h2><p>normal text</p></div>",
+      )
+   def test_orderedlistblock(self):
+      md = """1. one
+2. two
+3. three
+   """
+
+      node = markdown_to_html_node(md)
+      self.assertIsInstance(node, ParentNode)
+      html = node.to_html()
+      self.assertEqual(
+         html,
+         "<div><ol><li>one</li><li>two</li><li>three</li></ol></div>",
+      )
+   def test_listblock(self):
+      md = """- one
+- two
+- three
+   """
+
+      node = markdown_to_html_node(md)
+      self.assertIsInstance(node, ParentNode)
+      html = node.to_html()
+      self.assertEqual(
+         html,
+         "<div><ul><li>one</li><li>two</li><li>three</li></ul></div>",
       )
 
 if __name__ == "__main__":

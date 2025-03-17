@@ -37,11 +37,6 @@ class main():
             case TextType.IMAGE: # = "image"
                 leafType = "img"
                 return LeafNode(leafType, "", "src", "alt")
-        # TextType.BOLD: This should return a LeafNode with a "b" tag and the text
-        # TextType.ITALIC: "i" tag, text
-        # TextType.CODE: "code" tag, text
-        # TextType.LINK: "a" tag, anchor text, and "href" prop
-        # TextType.IMAGE: "img" tag, empty string value, "src" and "alt" props ("src" is the image URL, "alt" is the alt text)
         return LeafNode(leafType, text.text)
     # print (a.__eq__(b))
     node = ParentNode(

@@ -15,7 +15,8 @@ class HTMLNode():
       output = []
       if self.props:
          for prop in self.props:
-            # print(f"{self.props[prop]}")
+            print(f"{self.props}")
+            print(f"{self.props[prop]}")
             output.append(f'{prop}="{self.props[prop]}"')
          return (" ").join(output)
       return ""
@@ -58,11 +59,14 @@ class LeafNode(HTMLNode):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
+        props = ""
         if self.value is None:
             raise ValueError("Invalid HTML: no value")
         if self.tag is None:
             return self.value
-        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
+        if (len(self.props_to_html()) > 0):
+           props = (" "+ self.props_to_html())
+        return f"<{self.tag}{props}>{self.value}</{self.tag}>"
 
     def __repr__(self):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"

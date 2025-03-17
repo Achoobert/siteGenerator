@@ -18,22 +18,26 @@ class TestBlockNode(unittest.TestCase):
 this is 2 text node"""
         ]
         for block in arr:
-            self.assertIs(block_to_block_type(block), BlockType.PARAGRAPH)
+            a, text = block_to_block_type(block)
+            self.assertIs(a, BlockType.PARAGRAPH)
 
     def test_all(self):
-        block1 = block_to_block_type("## This is a text node")
-        block2 = block_to_block_type("""```This is a text node```""")
-        block3 = block_to_block_type("""- This is 1 text node
+        block1, text = block_to_block_type("## This is a text node")
+        block2, text = block_to_block_type("""```This is a text node```""")
+        block3, text = block_to_block_type("""- This is 1 text node
 - this is 2 text node""")
-        block4 = block_to_block_type("""1. This is 1 text node
+        block4, text = block_to_block_type("""1. This is 1 text node
 2. this is 2 text node""")
-        block5 = block_to_block_type("""> This is 1 text 
+        block5, text = block_to_block_type("""> This is 1 text 
 > this is 2 text """)
+        block6, text = block_to_block_type("""## This is a markdown node""")
+        
         self.assertIs(block1, BlockType.HEADING)
         self.assertIs(block2, BlockType.CODE)
         self.assertIs(block3, BlockType.UNORDERED_LIST)
         self.assertIs(block4, BlockType.ORDERED_LIST)
         self.assertIs(block5, BlockType.QUOTE)
+        self.assertIs(block6, BlockType.HEADING)
     # def test_text(self):
     #     node = TextNode("This is a text node", TextType.TEXT)
     #     html_node = text_node_to_html_node(node)
