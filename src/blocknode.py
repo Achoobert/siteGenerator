@@ -11,7 +11,8 @@ class BlockType(Enum):
 # We need a way to inspect a block of markdown text and determine what type of block it is.
 def detectHeader(text):
    # Headings start with 1-6 # characters, followed by a space and then the heading text.
-   return ( 0 < text.rfind("#") < 6)
+   # print (text, ( 0 < text.rfind("#") < 6))
+   return ( 0 <= text.rfind("#") < 6)
 def detectCode(text):
    # Code blocks must start with 3 backticks and end with 3 backticks.
    tail_of_block = (text[(len(text) - 3):])
@@ -50,6 +51,7 @@ def block_to_block_type(block):
    # If none of the following conditions are met, the block is a normal paragraph
    discovered_blockType = BlockType.PARAGRAPH
    if (detectHeader(block)):
+      # print("found a header")
       return BlockType.HEADING
    if (detectCode(block)):
       return BlockType.CODE

@@ -1,6 +1,7 @@
 from textnode import TextNode, TextType
 from htmlnode import HTMLNode, LeafNode, ParentNode
 from conversion import text_node_to_html_node, split_nodes_delimiter
+from copyDir import moveDirectory
 
 # print("hello world")
 a = TextNode("This is a text node", TextType.BOLD, "https://www.boot.dev")
@@ -52,5 +53,6 @@ class main():
             LeafNode(None, "Normal text"),
         ],
     )
-    print(node.to_html())
+    # print(node.to_html())
+    moveDirectory()
     #    print (node2.__repr__() == node1.__repr__())
