@@ -3,7 +3,7 @@ from enum import Enum
 import re
 
 # from htmlnode import HTMLNode, LeafNode, ParentNode
-from htmlnode import LeafNode
+from htmlnode import LeafNode, ParentNode
 from textnode import TextType, TextNode
 
 def text_node_to_html_node(text_node):
@@ -31,7 +31,6 @@ def text_node_to_html_node(text_node):
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     output = []
     for node in old_nodes:
-        # print (node.text)
         output.extend(
             split_node(node, delimiter, text_type)
         )
@@ -139,43 +138,3 @@ def text_to_textnodes(text):
     # LINK = "link"
     outArr = split_nodes_link(outArr)
     return outArr
-
-def stripBlock(text):
-    # temporarily remove \n characters, strip(), then restore
-    # print ( text)
-    newArray = text.split("\n")
-    skippedFirst = False
-    outString = ""
-    for i in range(len(newArray)):
-        newText = newArray[i].strip()
-        # print (newText)
-        if (skippedFirst and len(newText) > 1):
-            outString += ("\n"+newText)
-        elif (len(newText) > 1):
-            outString = newText
-            skippedFirst = True
-    return outString
-def splitBlock(text):
-    newArray = text.split("\n\n")
-    outArray = []
-    for i in range(len(newArray)):
-        if ( len(newArray[i]) > 0):
-            newText = stripBlock(newArray[i])
-            outArray.append(newText)
-    return outArray
-
-def markdown_to_blocks(text):
-
-    # blocks = text.split("\n\n")
-    blocks = splitBlock(text)
-    # blocks = list( map( lambda x: "".join(
-    #                 list ( map ( stripBlock, x ))
-    #             ), block.split("\n\n") 
-    #             ) ) 
-    # print (blocks)
-    # blocks2 = list( map( stripBlock, blocks ) ) 
-
-    # return (list(filter( lambda data: data != "", blocks )))
-    return blocks
-
-

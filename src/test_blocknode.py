@@ -2,7 +2,7 @@ import unittest
 import main
 
 from textnode import TextNode, TextType
-from blocknode import block_to_block_type, BlockType
+from blocknode import block_to_block_type, BlockType, markdown_to_blocks
 from conversion import text_node_to_html_node
 
 
@@ -49,6 +49,62 @@ this is 2 text node"""
     #     self.assertEqual(html_node.tag, "b")
     #     self.assertEqual(html_node.value, "This is a bold node")
     #     self.assertEqual(html_node.to_html(), "<b>This is a bold node</b>")
+    def test_markdown_to_blocks(self):
+        md = """
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+    """
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here This is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+    def test_markdown_to_three_blocks(self):
+        md = """
+# This is a heading
+
+This is a paragraph of text. It has some **bold** and _italic_ words inside of it.
+
+- This is the first list item in a list block
+- This is a list item
+- This is another list item
+"""
+        out = ["""# This is a heading""","""This is a paragraph of text. It has some **bold** and _italic_ words inside of it.""","""- This is the first list item in a list block
+- This is a list item
+- This is another list item"""]
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            out,
+        )
+    def test_mtb_excessive_newlines(self):
+        md = """
+    This is **bolded** paragraph
+
+
+
+
+
+
+    This is another paragraph with _italic_ text and `code` here
+    """
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here",
+            ],
+        )
 
 if __name__ == "__main__":
     unittest.main()

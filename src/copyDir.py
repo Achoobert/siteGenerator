@@ -26,7 +26,6 @@ def moveDirectory(source=baseSource, destination=baseDestination):
    for item in toCopy:
       childPath = path.join(source, item)
       childDestination = path.join(destination, item)
-      # print(childPath, childDestination)
       if (path.isfile(childPath)):
          print("copying file: "+childPath+" to: "+childDestination)
          copy(childPath, childDestination)

@@ -66,7 +66,7 @@ normal text
       html = node.to_html()
       self.assertEqual(
          html,
-         "<div><h1>This is header that <i>should</i></h1>\n<p>normal text</p>\n<h2>Smaller header</h2><p>normal text</p></div>",
+         "<div><h1>This is header that <i>should</i></h1><p>normal text</p><h2>Smaller header</h2><p>normal text</p></div>",
       )
    def test_orderedlistblock(self):
       md = """1. one

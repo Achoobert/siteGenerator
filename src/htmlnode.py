@@ -15,8 +15,8 @@ class HTMLNode():
       output = []
       if self.props:
          for prop in self.props:
-            print(f"{self.props}")
-            print(f"{self.props[prop]}")
+            # print(f"{self.props}")
+            # print(f"{self.props[prop]}")
             output.append(f'{prop}="{self.props[prop]}"')
          return (" ").join(output)
       return ""
