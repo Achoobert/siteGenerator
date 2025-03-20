@@ -7,10 +7,10 @@ from htmlnode import LeafNode, ParentNode
 from textnode import TextType, TextNode
 
 def text_node_to_html_node(text_node):
-    if (len(text_node.text.strip()) == 0):
+    if (not isinstance(text_node.text, str) or len(text_node.text.strip()) == 0):
         return None
-    if (text_node.text_type != TextType.CODE):
-        text_node.text = text_node.text.replace("\n", " ")
+    # if (text_node.text_type != TextType.CODE and text_node.text_type != TextType. ):
+    #     text_node.text = text_node.text.replace("\n", " ")
     match text_node.text_type:
         case TextType.TEXT:
             return LeafNode(None, text_node.text)
@@ -49,7 +49,6 @@ def split_node(node, delimiter, text_type):
         outputArr = [] 
         current_type = node.text_type
         for i in range(len(inArr)): 
-            # print( len(inArr[i]) )
             if ( len(inArr[i]) == 0):
                 current_type = typeSwitch(current_type)
             else:
@@ -93,7 +92,6 @@ def split_nodes_image(old_nodes):
     outputArray = []
     for node in old_nodes:
         outputArray.extend(split_node_image(node))
-    # print (outputArray)
     return outputArray
 
 def split_node_link(node):
@@ -119,8 +117,13 @@ def split_nodes_link(old_nodes):
         raise Exception("Not List")
     for node in old_nodes:
         outputArray.extend(split_node_link(node))
-    # print (outputArray)
     return outputArray
+
+def list_to_textnodes(arr):
+    outArr = []
+    for text in arr:
+        outArr.extend(text_to_textnodes(text))
+    return outArr
 
 def text_to_textnodes(text):
     outArr = []

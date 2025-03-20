@@ -11,50 +11,47 @@ class BlockType(Enum):
 # We need a way to inspect a block of markdown text and determine what type of block it is.
 def detectHeader(text):
    # Headings start with 1-6 # characters, followed by a space and then the heading text.
-   # print (text, ( 0 < text.rfind("#") < 6))
-
-   # return ( 0 < text.rfind("# "))
    return ( 0 <= text.rfind("#") <= 6)
 def detectCode(text):
    # Code blocks must start with 3 backticks and end with 3 backticks.
    tail_of_block = (text[(len(text) - 3):])
-   # print (tail_of_block)
    return (( text[:3] == "```" and tail_of_block == "```") or (text[:4] == """```
 """ and text[-4:] == """
 ```"""))
 def detectQuote(arr):
    # Every line in a quote block must start with a > character.
+   expected_prefix = "> "
    for line in arr:
-      if (isinstance(line, str) and len(line) > 0 and line[0] == """>"""  and line[1] == " " ):
-         continue
-      else:
+      if not line.startswith(expected_prefix):
          return False
-   # print("found quote", arr)
    return True
 def detectList(arr):
-   # Every line in an unordered list block must start with a - character, followed by a space.
-   for line in arr:
-      if (line[0] == "-" and line[1] == " " ):  
-         continue
-      else:
+   for i in range(len(arr)):
+      expected_prefix = f"- "
+      if not arr[i].startswith(expected_prefix):
          return False
    return True
 def detectOrderedList(arr):
-   # Every line in an ordered list block must start with a number followed by a . character and a space. The number must start at 1 and increment by 1 for each line.
    for i in range(len(arr)):
-      checkNum = i+1
-      if (arr[i][0] == f"{checkNum}" and arr[i][1] == "." ):
-         continue
-      else:
+      expected_prefix = f"{i+1}. "
+      if not arr[i].startswith(expected_prefix):
          return False
    return True
 
+def clean_string(input):
+   return input[2:].strip()
+
 def clean_string_starter(blockArr):
-   out_string = ""
+   outArr = []
    for i in range(len(blockArr)):
-      out_string += (blockArr[i][2:]) # TODO smarter 
-      out_string += ("\n")
-   return out_string
+      txt = blockArr[i][2:].strip()
+      if (len(txt) > 0):
+         outArr.append(blockArr[i][2:])
+   return "\n".join(outArr)
+
+def cleanList(inputText):
+   newArray = inputText.split("\n")
+   return (list(map( clean_string, newArray)))
 
 # Create a block_to_block_type function that takes a single block of markdown text as input 
 # and returns the BlockType representing the type of block it is. 
@@ -66,12 +63,13 @@ def block_to_block_type(block):
    if (detectHeader(block)):
       # cannot count header here
       # text = block[(2+ block[7:].rfind("#")):]
-      text = block.strip("#")
+      text = block.lstrip("#")
       text = text.strip()
       return BlockType.HEADING, text
    if (detectCode(block)):
       text = block.strip("```")
       return BlockType.CODE, text
+   # cleaned = block.strip("\n")
    blockArr = block.split("\n")
    if (not isinstance(blockArr, list) or len(blockArr) == 0):
       raise Exception("not array")
@@ -81,16 +79,25 @@ def block_to_block_type(block):
    if (detectList(blockArr)):
       return BlockType.UNORDERED_LIST, clean_string_starter(blockArr)
    if (detectOrderedList(blockArr)):
-      return BlockType.ORDERED_LIST, clean_string_starter(blockArr)
+      text = clean_string_starter(blockArr)
+      return BlockType.ORDERED_LIST, text
    return discovered_blockType, block
 
 
-def stripBlock(text):
+def stripBlock(inputText):
    # temporarily remove \n characters, strip(), then restore
-   newArray = text.split("\n")
+   if ( not isinstance(inputText, str)):
+      raise Exception("stripBlock: Not a string")
+   if ( len(inputText) == 0):
+      raise Exception("stripBlock: no text in string")
+   outerType, txt = block_to_block_type(inputText)
+   newArray = inputText.split("\n")
    outArray = []
    currentString = ""
    lastType = BlockType.PARAGRAPH
+   if (outerType == BlockType.ORDERED_LIST or outerType == BlockType.UNORDERED_LIST):
+      return ([inputText])
+
    for i in range(len(newArray)):
       text = newArray[i].strip()
       if ( len(text) > 0):
@@ -117,7 +124,6 @@ def stripBlock(text):
                      continue
                   currentString += "\n"
             else:
-               # print ((lastType , currentType))
                outArray.append(currentString)
                currentString = ""
                lastType = currentType
@@ -125,13 +131,15 @@ def stripBlock(text):
             # outArray.append( text )
    if (len(currentString) > 0):
       outArray.append(currentString)
-   # print("isaac out array: ", outArray)
    return outArray
 
 def splitBlock(text):
    newArray = text.split("\n\n")
    outArray = []
    for i in range(len(newArray)):
+      if (len(newArray[i]) <= 0):
+         # skip empty lines
+         continue
       arr = stripBlock(newArray[i])
       if ( len(arr) > 0 and (len(arr[0]) > 0)):
          outArray.extend(arr)

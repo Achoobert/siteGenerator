@@ -52,7 +52,7 @@ class TestBlockNode(unittest.TestCase):
       html = node.to_html()
       self.assertEqual(
          html,
-         "<div><blockquote>This is quote that <i>should</i> remain the <b>same</b> even with inline stuff </blockquote></div>",
+         "<div><blockquote>This is quote that <i>should</i> remain\nthe <b>same</b> even with inline stuff</blockquote></div>",
       )
    def test_headerblock(self):
       md = """# This is header that _should_ 
@@ -69,20 +69,19 @@ normal text
          "<div><h1>This is header that <i>should</i></h1><p>normal text</p><h2>Smaller header</h2><p>normal text</p></div>",
       )
    def test_orderedlistblock(self):
-      md = """1. one
+      md = """1. one/three ordered
 2. two
-3. three
-   """
+3. three"""
 
       node = markdown_to_html_node(md)
       self.assertIsInstance(node, ParentNode)
       html = node.to_html()
       self.assertEqual(
          html,
-         "<div><ol><li>one</li><li>two</li><li>three</li></ol></div>",
+         "<div><ol><li>one/three ordered</li><li>two</li><li>three</li></ol></div>",
       )
    def test_listblock(self):
-      md = """- one
+      md = """- one/three. unordered
 - two
 - three
    """
@@ -92,7 +91,7 @@ normal text
       html = node.to_html()
       self.assertEqual(
          html,
-         "<div><ul><li>one</li><li>two</li><li>three</li></ul></div>",
+         "<div><ul><li>one/three. unordered</li><li>two</li><li>three</li></ul></div>",
       )
 
 if __name__ == "__main__":
