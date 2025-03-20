@@ -44,7 +44,7 @@ def clearDir(destination=baseDestination):
 
 # moveDirectory()
 
-def generateFromDirectory(source=contentSource, destination=baseDestination):
+def generateFromDirectory(base_path, source=contentSource, destination=baseDestination):
    if (not path.exists(source)):
       raise Exception("Cannot find source!", source)
    toCopy = listdir(path.join(source))
@@ -56,7 +56,7 @@ def generateFromDirectory(source=contentSource, destination=baseDestination):
             childDestination = path.join(destination, (item[:(len(item) - 3)]+".html")) 
             print("generating file: "+childPath+" placing into: "+childDestination)
             # generate_page('./content/index.md', './template.html', './public/index.html')
-            generate_page(childPath, templateSource, childDestination)
+            generate_page(base_path, childPath, templateSource, childDestination)
       else:
          childDestination = path.join(destination, item)
-         generateFromDirectory(childPath, childDestination)
+         generateFromDirectory(base_path, childPath, childDestination)

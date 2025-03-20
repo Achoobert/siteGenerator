@@ -2,7 +2,7 @@ from os.path import join
 from os import path, mkdir
 from blocktohtml import markdown_to_html_node, extract_title
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(base_path, from_path, template_path, dest_path):
    if (not path.exists(from_path) or not path.exists(template_path) ):
       # print(source)
       raise Exception("Cannot find source!")
@@ -17,12 +17,17 @@ def generate_page(from_path, template_path, dest_path):
    # Use the extract_title function to grab the title of the page.
    title = extract_title(from_markdown_file)
    # print("title",title)
-   # print("isaac content",content,"end isaac content")
    # Read the template file at template_path and store the contents in a variable.
    from_html_file = open(join(template_path)).read()
    # Replace the {{ Title }} and {{ Content }} placeholders in the template with the HTML and title you generated.
    new_html_string = from_html_file.replace("{{ Title }}",title)
-   new_html_string = from_html_file.replace("{{ Content }}",content.to_html())
+   new_html_string = new_html_string.replace("{{ Content }}",content.to_html())
+
+   # replace any instances of:
+   # href="/ with href="{BASEPATH}
+   # src="/ with src="{BASEPATH}
+   new_html_string = new_html_string.replace("""href="/""", f"href=\"{base_path}")
+   new_html_string = new_html_string.replace("""src="/""", f"src=\"{base_path}")
 
    # Write the new full HTML page to a file at dest_path. Be sure to 
    # create any necessary directories if they don't exist.

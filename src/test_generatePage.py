@@ -7,7 +7,7 @@ from generatePage import generate_page
 class TestBlockNode(unittest.TestCase):
     def test_none(self):
         # generate_page('./content/index.md', './template.html', './public/test/deep/deep/test.html')
-        generate_page('./content/blog/glorfindel.md', './template.html', './public/blog/glorfindel.html')
+        # generate_page("/", './content/blog/glorfindel.md', './template.html', './public/blog/glorfindel.html')
         content ="""<!doctype html>
 <html>
 

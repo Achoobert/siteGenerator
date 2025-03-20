@@ -1,5 +1,3 @@
-public/
-
 __pycache__/
 
 # Byte-compiled / optimized / DLL files
@@ -126,3 +124,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+docs/
